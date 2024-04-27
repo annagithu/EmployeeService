@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using EmployeeService.Helpers;
+﻿using EmployeeService.Helpers;
 using EmployeeService.InternalContracts.Models;
 using EmployeeService.Repositories;
 
@@ -8,13 +7,9 @@ namespace EmployeeService.Services
     public class EmployeeService : IEmployeeService
     {
         private IEmployeeRepository _employeeRepository;
-        private IMapper _mapper;
-        public EmployeeService(
-                IEmployeeRepository employeeRepository,
-                IMapper mapper)
+        public EmployeeService(IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
-            _mapper = mapper;
         }
 
         public async Task Create(EmployeeModel model)
@@ -22,9 +17,7 @@ namespace EmployeeService.Services
             if (await _employeeRepository.GetById(model.Id) != null)
                 throw new AppException("Employee with the ID '" + model.Id + "' already exists");
 
-            var employee = _mapper.Map<EmployeeModel>(model);
-
-            await _employeeRepository.Create(employee);
+            await _employeeRepository.Create(model);
         }
 
         public async Task<EmployeeQueryModel> GetById(int id)
@@ -54,9 +47,7 @@ namespace EmployeeService.Services
             if (await _employeeRepository.GetById(model.Id) == null)
                 throw new AppException("Employee with the ID '" + model.Id + "' doesn't exist");
 
-            var employee = _mapper.Map<EmployeeModel>(model);
-
-            await _employeeRepository.UpdateEmployee(employee);
+            await _employeeRepository.UpdateEmployee(model);
         }
     }
 }

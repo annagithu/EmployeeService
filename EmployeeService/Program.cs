@@ -16,7 +16,6 @@ using System.Text.Json.Serialization;
 
 
 
-    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     builder.Services.Configure<DbSettings>(builder.Configuration.GetSection("DbSettings"));
 
