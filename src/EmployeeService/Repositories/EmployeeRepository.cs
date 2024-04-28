@@ -11,37 +11,44 @@ namespace EmployeeService.Repositories
     {
         private DataContext _context = context;
 
-        public async Task Create(EmployeeModel employee)
+        public async Task<int> Create(EmployeeModel employee)
         {
 
             using var connection = _context.CreateConnection();
 
-
-
-            EmployeeQueryModel employeeQueryModel = employee.ToQueryFromEmployee();
+            var employeeQueryModel = employee.ToQueryFromEmployee();
 
             var sql = """
+            INSERT INTO employees (name, surname, phone, companyId, passport, department)
+            VALUES (@Name, @Surname, @Phone, @CompanyId, @PassportNumber, @DepartmentName)
+            RETURNING id;
+            """;
+            employeeQueryModel.Id = await connection.QuerySingleOrDefaultAsync<int>(sql, employeeQueryModel);
+
+            var sqlDeptsAndPass = """
             INSERT INTO departments (departmentname, departmentphone, employeeid)
             VALUES (@DepartmentName, @DepartmentPhone, @EmployeeId);
 
             INSERT INTO passports (passporttype, passportnumber, employeeid)
             VALUES (@PassportType, @PassportNumber, @EmployeeId);
-
-            INSERT INTO employees (id, name, surname, phone, companyId, passport, department)
-            VALUES (@Id, @Name, @Surname, @Phone, @CompanyId, @PassportNumber, @DepartmentName);
+            
             """;
-
-            await connection.ExecuteAsync(sql, employeeQueryModel);
+            await connection.ExecuteAsync(sqlDeptsAndPass, employeeQueryModel);
+            return employeeQueryModel.Id;
         }
 
         public async Task<EmployeeQueryModel> GetById(int id)
         {
             using var connection = _context.CreateConnection();
-            var sql = """
-            SELECT id FROM employees
-            WHERE employees.id = @Id
+
+            var sqlId = """
+            SELECT emp.id, emp.name, emp.surname, emp.phone, emp.companyId, emp.passport, emp.department, pass.passporttype, pass.passportnumber, dept.departmentname, dept.departmentphone, pass.employeeid
+            FROM employees emp
+            LEFT JOIN passports pass ON emp.id = pass.employeeid
+            LEFT JOIN departments dept ON emp.id = dept.employeeid
+            where emp.id = @id
             """;
-            return await connection.QuerySingleOrDefaultAsync<EmployeeQueryModel>(sql, new { id });
+            return await connection.QuerySingleOrDefaultAsync<EmployeeQueryModel>(sqlId, new { id });
         }
 
         public async Task DeleteEmployee(int id)
@@ -65,7 +72,7 @@ namespace EmployeeService.Repositories
         {
             using var connection = _context.CreateConnection();
 
-                var sqlId = """
+            var sqlId = """
             SELECT emp.id, emp.name, emp.surname, emp.phone, emp.companyId, emp.passport, emp.department, pass.passporttype, pass.passportnumber, dept.departmentname, dept.departmentphone, pass.employeeid
             FROM employees emp
             LEFT JOIN passports pass ON emp.id = pass.employeeid
@@ -73,19 +80,11 @@ namespace EmployeeService.Repositories
             where emp.companyId = @id
             """;
 
-            IEnumerable<EmployeeQueryModel> employeeQueryModels = await connection.QueryAsync<EmployeeQueryModel>(sqlId, new { id });
+            return (await connection.QueryAsync<EmployeeQueryModel>(sqlId, new { id })).Select(x => x.ToEmployeeModelFromQuery()).ToList();
 
-            List<EmployeeModel> result = [];
-
-            foreach (var employee in employeeQueryModels)
-            {
-                result.Add(employee.ToEmployeeModelFromQuery());
-            }
-            
-            return result;
         }
 
-        public async Task<List<EmployeeModel>> GetByDepartmentName(string deptName)
+        public async Task<List<EmployeeModel>> GetByDepartmentName(int companyId, string deptName)
         {
             using var connection = _context.CreateConnection();
 
@@ -94,26 +93,27 @@ namespace EmployeeService.Repositories
             FROM employees emp
             LEFT JOIN passports pass ON emp.id = pass.employeeid
             LEFT JOIN departments dept ON emp.id = dept.employeeid
-            where dept.departmentname = @deptName
+            where dept.departmentname = @deptName AND emp.companyId = @companyId
             """;
 
-            IEnumerable<EmployeeQueryModel> employeeQueryModels = await connection.QueryAsync<EmployeeQueryModel>(sqlId, new { deptName });
 
-            List<EmployeeModel> result = [];
 
-            foreach (var employee in employeeQueryModels)
-            {
-                result.Add(employee.ToEmployeeModelFromQuery());
-            }
 
-            return result;
+
+            return (await connection.QueryAsync<EmployeeQueryModel>(sqlId, new { deptName, companyId })).Select(x => x.ToEmployeeModelFromQuery()).ToList();
         }
 
         public async Task UpdateEmployee(EmployeeModel model)
         {
+
+
             using var connection = _context.CreateConnection();
 
-            EmployeeQueryModel employeeQueryModel = model.ToQueryFromEmployee();
+            var employeeQueryModel = model.ToQueryFromEmployee();
+
+            var queryFromDb = await GetById(employeeQueryModel.Id);
+
+            employeeQueryModel = employeeQueryModel.IsNotUpdated(queryFromDb);
 
             var sql = """
             UPDATE departments 

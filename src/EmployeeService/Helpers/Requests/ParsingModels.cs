@@ -37,12 +37,26 @@ namespace EmployeeService.Helpers.Requests
                 Surname = employeeModel.Surname,
                 Phone = employeeModel.Phone,
                 CompanyId = employeeModel.CompanyId,
-                PassportType = employeeModel.Passport.PassportType,
-                PassportNumber = employeeModel.Passport.PassportNumber,
-                DepartmentName = employeeModel.Department.DepartmentName,
-                DepartmentPhone = employeeModel.Department.DepartmentPhone,
+                PassportType = employeeModel.Passport?.PassportType,
+                PassportNumber = employeeModel.Passport?.PassportNumber,
+                DepartmentName = employeeModel.Department?.DepartmentName,
+                DepartmentPhone = employeeModel.Department?.DepartmentPhone,
                 EmployeeId = employeeModel.Id
             };
+        }
+
+        public static EmployeeQueryModel IsNotUpdated(this EmployeeQueryModel modelEmployee, EmployeeQueryModel queryFromDb)
+        {
+            modelEmployee.Name ??= queryFromDb.Name;
+            modelEmployee.Surname ??= queryFromDb.Surname;
+            modelEmployee.Phone ??= queryFromDb.Phone;
+            modelEmployee.CompanyId ??= queryFromDb.CompanyId;
+            modelEmployee.PassportType ??= queryFromDb.PassportType;
+            modelEmployee.PassportNumber ??= queryFromDb.PassportNumber;
+            modelEmployee.DepartmentName ??= queryFromDb.DepartmentName;
+            modelEmployee.DepartmentPhone ??= queryFromDb.DepartmentPhone;
+            modelEmployee.EmployeeId ??= queryFromDb.EmployeeId;
+            return modelEmployee;
         }
     }
 }

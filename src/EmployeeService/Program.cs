@@ -24,7 +24,7 @@ using System.Text.Json.Serialization;
     builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddScoped<IEmployeeService, EmployeeService.Services.EmployeeService>();
 
-    //builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -39,7 +39,8 @@ using System.Text.Json.Serialization;
 
   
 
-
+    
+    
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
@@ -53,4 +54,3 @@ using System.Text.Json.Serialization;
 
     app.Run();
 }
-

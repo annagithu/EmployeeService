@@ -4,7 +4,7 @@ namespace EmployeeService.Services
 {
     public interface IEmployeeService
     {
-        Task Create(EmployeeModel model);
+        Task<int>Create(EmployeeModel model);
 
         Task <EmployeeQueryModel> GetById(int id);
 
@@ -12,7 +12,7 @@ namespace EmployeeService.Services
 
         Task<List<EmployeeModel>> GetByCompanyId(int id);
 
-        Task<List<EmployeeModel>> GetByDepartmentName(string deptName);
+        Task<List<EmployeeModel>> GetByDepartmentName(int companyId, string deptName);
 
         Task UpdateEmployee(EmployeeModel model);
     }

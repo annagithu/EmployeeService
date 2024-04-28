@@ -12,12 +12,9 @@ namespace EmployeeService.Services
             _employeeRepository = employeeRepository;
         }
 
-        public async Task Create(EmployeeModel model)
+        public async Task<int>Create(EmployeeModel model)
         {
-            if (await _employeeRepository.GetById(model.Id) != null)
-                throw new AppException("Employee with the ID '" + model.Id + "' already exists");
-
-            await _employeeRepository.Create(model);
+           return await _employeeRepository.Create(model);
         }
 
         public async Task<EmployeeQueryModel> GetById(int id)
@@ -37,9 +34,9 @@ namespace EmployeeService.Services
             return await _employeeRepository.GetByCompanyId(id);
         }
 
-        public async Task<List<EmployeeModel>> GetByDepartmentName(string deptName)
+        public async Task<List<EmployeeModel>> GetByDepartmentName(int companyId, string deptName)
         {
-            return await _employeeRepository.GetByDepartmentName(deptName);
+            return await _employeeRepository.GetByDepartmentName(companyId, deptName);
         }
 
         public async Task UpdateEmployee(EmployeeModel model)

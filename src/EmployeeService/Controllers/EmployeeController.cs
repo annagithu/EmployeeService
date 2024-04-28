@@ -16,35 +16,34 @@ namespace EmployeeService.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost("Create employee")]
+        [HttpPost("CreateEmployee")]
         public async Task<IActionResult> Create(EmployeeModel model)
         {
-            await _employeeService.Create(model);
-            return Ok(new { message = "Employee created" });
+            return Ok(await _employeeService.Create(model));
         }
 
-        [HttpDelete("Delete employee")]
+        [HttpDelete("DeleteEmployee")]
         public async Task<IActionResult> Delete(int id)
         {
             await _employeeService.DeleteEmployee(id);
             return Ok(new { message = "Employee deleted" });
         }
 
-        [HttpGet("Get employees by company id")]
+        [HttpGet("GetEmployeesByCompanyId")]
         public async Task<IActionResult> GetByCompanyId(int id)
         {
             var employees = await _employeeService.GetByCompanyId(id);
             return Ok(employees);
         }
 
-        [HttpGet("Get employees by department")]
-        public async Task<IActionResult> GetByDepartmentName(string deptName)
+        [HttpGet("GetEmployeesByDepartment")]
+        public async Task<IActionResult> GetByDepartmentName(int companyId, string deptName)
         {
-            var employees = await _employeeService.GetByDepartmentName(deptName);
+            var employees = await _employeeService.GetByDepartmentName(companyId, deptName);
             return Ok(employees);
         }
 
-        [HttpPut("Update employee's data")]
+        [HttpPut("UpdateEmployeeData")]
         public async Task<IActionResult> UpdateEmployee(EmployeeModel model)
         {
             await _employeeService.UpdateEmployee(model);

@@ -50,16 +50,14 @@ namespace EmployeeService.Helpers
             async Task _initTableEmployees()
             {
                 var sql = """
-               CREATE TABLE employees (
-                id int PRIMARY KEY,
+               CREATE TABLE IF NOT EXISTS employees (
+                id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
                 name varchar(50) NOT NULL,
             	surname varchar(50) NOT NULL,
             	phone varchar(11) NOT NULL,
             	companyId int NOT NULL,
             	passport varchar(10),
-            	FOREIGN KEY (passport) REFERENCES passports(number),
-            	department varchar(50),
-            	FOREIGN KEY (department) REFERENCES departments(name)
+            	department varchar(50)
             ); 
             """;
                 await connection.ExecuteAsync(sql);
