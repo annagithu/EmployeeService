@@ -19,18 +19,18 @@ Web-Сервис сотрудников, сделанный на платфор�
 ## Модель сотрудника: 
 ```
 {
-Id int
-Name string
-Surname string
-Phone string
-CompanyId int
-Passport {
-Type string
-Number string
-}
-Department {
-Name string
-Phone string
-}
+	Id int
+	Name string
+	Surname string
+	Phone string
+	CompanyId int
+	Passport {
+		Type string
+		Number string
+		}
+	Department {
+		Name string
+		Phone string
+		}
 }
 ```
