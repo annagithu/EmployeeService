@@ -109,7 +109,7 @@ namespace EmployeeService.Repositories
 
             var queryFromDb = await GetById(employeeQueryModel.Id);
 
-            employeeQueryModel = employeeQueryModel.IsNotUpdated(queryFromDb);
+            employeeQueryModel = employeeQueryModel.СomparisonModels(queryFromDb);
 
             var sql = """
             UPDATE departments 

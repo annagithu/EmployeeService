@@ -43,7 +43,7 @@ namespace EmployeeService.Helpers.Requests
             };
         }
 
-        public static EmployeeQueryModel IsNotUpdated(this EmployeeQueryModel modelEmployee, EmployeeQueryModel queryFromDb)
+        public static EmployeeQueryModel СomparisonModels(this EmployeeQueryModel modelEmployee, EmployeeQueryModel queryFromDb)
         {
             modelEmployee.Name ??= queryFromDb.Name;
             modelEmployee.Surname ??= queryFromDb.Surname;
