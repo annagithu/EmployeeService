@@ -13,10 +13,6 @@ using System.Text.Json.Serialization;
         x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
-
-
-
-
     builder.Services.Configure<DbSettings>(builder.Configuration.GetSection("DbSettings"));
 
     builder.Services.AddSingleton<DataContext>();
@@ -36,10 +32,6 @@ using System.Text.Json.Serialization;
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
         await context.Init();
     }
-
-  
-
-    
     
     if (app.Environment.IsDevelopment())
     {
@@ -49,6 +41,12 @@ using System.Text.Json.Serialization;
 
     app.UseAuthorization();
 
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+
+    app.UseMiddleware<ErrorHandler>();
 
     app.MapControllers();
 
