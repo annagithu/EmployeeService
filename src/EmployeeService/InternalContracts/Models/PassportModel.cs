@@ -9,8 +9,5 @@ namespace EmployeeService.InternalContracts.Models
 
         [Column("passportNumber")]
         public string PassportNumber { get; set; }
-
-        [Column("employeeId")]
-        public int EmployeeId { get; set; }
     }
 }

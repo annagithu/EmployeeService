@@ -10,7 +10,6 @@ namespace EmployeeService.Controllers
     public class EmployeeController : ControllerBase
     {
         private IEmployeeService _employeeService;
-
         public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;

@@ -13,7 +13,6 @@ namespace EmployeeService.Repositories
 
         public async Task<int> Create(EmployeeModel employee)
         {
-
             using var connection = _context.CreateConnection();
 
             var employeeQueryModel = employee.ToQueryFromEmployee();
@@ -23,16 +22,18 @@ namespace EmployeeService.Repositories
             VALUES (@Name, @Surname, @Phone, @CompanyId, @PassportNumber, @DepartmentName)
             RETURNING id;
             """;
+
             employeeQueryModel.Id = await connection.QuerySingleOrDefaultAsync<int>(sql, employeeQueryModel);
 
             var sqlDeptsAndPass = """
             INSERT INTO departments (departmentname, departmentphone, employeeid)
-            VALUES (@DepartmentName, @DepartmentPhone, @EmployeeId);
+            VALUES (@DepartmentName, @DepartmentPhone, @Id);
 
             INSERT INTO passports (passporttype, passportnumber, employeeid)
-            VALUES (@PassportType, @PassportNumber, @EmployeeId);
+            VALUES (@PassportType, @PassportNumber, @Id);
             
             """;
+
             await connection.ExecuteAsync(sqlDeptsAndPass, employeeQueryModel);
             return employeeQueryModel.Id;
         }
@@ -48,6 +49,7 @@ namespace EmployeeService.Repositories
             LEFT JOIN departments dept ON emp.id = dept.employeeid
             where emp.id = @id
             """;
+
             return await connection.QuerySingleOrDefaultAsync<EmployeeQueryModel>(sqlId, new { id });
         }
 
@@ -96,17 +98,11 @@ namespace EmployeeService.Repositories
             where dept.departmentname = @deptName AND emp.companyId = @companyId
             """;
 
-
-
-
-
             return (await connection.QueryAsync<EmployeeQueryModel>(sqlId, new { deptName, companyId })).Select(x => x.ToEmployeeModelFromQuery()).ToList();
         }
 
         public async Task UpdateEmployee(EmployeeModel model)
         {
-
-
             using var connection = _context.CreateConnection();
 
             var employeeQueryModel = model.ToQueryFromEmployee();

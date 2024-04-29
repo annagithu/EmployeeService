@@ -15,13 +15,11 @@ namespace EmployeeService.Helpers.Requests
                 CompanyId = requestModel.CompanyId,
                 Passport = new PassportModel
                 {
-                    EmployeeId = requestModel.Id,
                     PassportNumber = requestModel.PassportNumber,
                     PassportType = requestModel.PassportType
                 },
                 Department = new DepartmentModel
                 {
-                    EmployeeId = requestModel.Id,
                     DepartmentName = requestModel.DepartmentName,
                     DepartmentPhone = requestModel.DepartmentPhone
                 }
